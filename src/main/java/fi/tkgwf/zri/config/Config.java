@@ -93,7 +93,10 @@ public abstract class Config {
             File[] configFiles = jarLocation.listFiles(configFileFilter);
             if (configFiles == null || configFiles.length == 0) {
                 // look for config files in the parent directory if none found in the current directory
-                configFiles = jarLocation.getParentFile().listFiles(configFileFilter);
+                File parentFile = jarLocation.getParentFile();
+                if (parentFile != null) {
+                    configFiles = parentFile.listFiles(configFileFilter);
+                }
             }
             if (configFiles != null && configFiles.length > 0) {
                 LOG.debug("Config: " + configFiles[0]);
