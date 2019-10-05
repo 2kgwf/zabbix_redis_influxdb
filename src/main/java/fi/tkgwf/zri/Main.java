@@ -25,6 +25,7 @@ public class Main {
     private StatefulRedisConnection<String, String> redisConnection;
     private long nextStats;
     private long processed;
+    private long skipped;
 
     public static void main(String[] args) {
         Main m = new Main();
@@ -45,6 +46,7 @@ public class Main {
         redisConnection = redis.connect();
         nextStats = System.currentTimeMillis() + STATS_INTERVAL_MS;
         processed = 0;
+        skipped = 0;
     }
 
     private void run() {
@@ -70,11 +72,7 @@ public class Main {
                     }
                 }
                 if (System.currentTimeMillis() > nextStats) {
-                    long durationMs = System.currentTimeMillis() - nextStats + STATS_INTERVAL_MS;
-                    double durationH = durationMs / (60 * 60 * 1000.0);
-                    double perSecond = processed * 1000.0 / durationMs;
-                    LOG.info("Processed " + processed + " items in the past " + durationH + " hours (" + perSecond + "/sec)");
-                    nextStats = System.currentTimeMillis() + STATS_INTERVAL_MS;
+                    logStats();
                 }
             } catch (Exception ex) {
                 LOG.error("Unexpected error while processing data, data will be lost!", ex);
@@ -108,6 +106,7 @@ public class Main {
         String valueString = split[4];
         if (timeSeconds == null || timeNanos == null) {
             LOG.warn("Malformed data: " + entry);
+            skipped++;
             return true;
         }
         Double value;
@@ -119,9 +118,11 @@ public class Main {
             case "s":
             case "t":
             case "l":
+                skipped++;
                 return true; // we're not interested in other types, just discard them
             default:
                 LOG.warn("Malformed data: " + entry);
+                skipped++;
                 return true;
         }
         try {
@@ -144,6 +145,17 @@ public class Main {
         }
         handleFailure(entry);
         return false;
+    }
+
+    private void logStats() {
+        long durationMs = System.currentTimeMillis() - nextStats + STATS_INTERVAL_MS;
+        double durationH = durationMs / (60 * 60 * 1000.0);
+        double processedPerSecond = processed * 1000.0 / durationMs;
+        double skippedPerSecond = skipped * 1000.0 / durationMs;
+        LOG.info("Processed " + processed + " and skipped " + skipped + " items in the past " + durationH + " hours (processed: " + processedPerSecond + "/sec, skipped: " + skippedPerSecond + "/sec)");
+        nextStats = System.currentTimeMillis() + STATS_INTERVAL_MS;
+        processed = 0;
+        skipped = 0;
     }
 
     private void handleFailure(String data) {
