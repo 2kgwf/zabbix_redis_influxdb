@@ -1,0 +1,33 @@
+version: '3.5'
+services:
+  zabbix_redis_influxdb:
+    image: scrinii/zabbix_redis_influxdb
+    container_name: zri_exporter
+    restart: always
+    environment:
+      - ZRI_ZABBIX_URL=http://192.168.xxx.xxx
+      - ZRI_ZABBIX_USER=redis-influxdb-exporter
+      - ZRI_ZABBIX_PASSWORD=topsecret
+      - ZRI_REDIS_HOST=redis
+      - ZRI_INFLUXDB_URL=http://influxdb:8086
+  redis:
+    image: redis:5
+    container_name: zri_redis
+    restart: always
+    ports:
+      - "6379:6379"
+  influxdb:
+    image: influxdb:1.7
+    container_name: zri_influxdb
+    restart: always
+  grafana:
+    image: grafana/grafana
+    container_name: zri_grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+networks:
+  default:
+    name: zabbix-redis-influxdb
