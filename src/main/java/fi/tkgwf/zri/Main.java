@@ -160,7 +160,7 @@ public class Main {
 
     private void handleFailure(String data) {
         LOG.info("Returning failed data to queue " + REDIS_QUEUE_ITEM_NAME + ": " + data);
-        redisConnection.sync().lpush(REDIS_QUEUE_ITEM_NAME, data);
+        redisConnection.sync().rpush(REDIS_QUEUE_ITEM_NAME, data);
     }
 
     private Long safeLong(String s) {
