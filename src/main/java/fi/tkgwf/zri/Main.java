@@ -65,7 +65,7 @@ public class Main {
                 boolean success = processEntry(entry);
                 if (!success) {
                     try {
-                        Thread.sleep(10000); // possibly lost connection or so, wait for a bit
+                        Thread.sleep(1000); // possibly lost connection or so, wait for a bit
                     } catch (InterruptedException ex) {
                         LOG.info("Interrupted. Exiting...", ex);
                         break;
