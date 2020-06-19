@@ -136,12 +136,10 @@ public class Main {
                     return true;
                 } else {
                     skipped++;
-                    LOG.error("Can't get gost details for host id " + item.hostid + " (for item id " + itemId + ")");
                     return false;
                 }
             } else {
                 skipped++;
-                LOG.error("Can't get item details for item id " + itemId);
                 return false;
             }
         } catch (IOException ex) {
