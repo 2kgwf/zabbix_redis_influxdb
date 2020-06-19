@@ -136,11 +136,11 @@ public class Main {
                     return true;
                 } else {
                     skipped++;
-                    return false;
+                    return true;
                 }
             } else {
                 skipped++;
-                return false;
+                return true;
             }
         } catch (IOException ex) {
             LOG.error("Failed to get item from zabbix", ex);
