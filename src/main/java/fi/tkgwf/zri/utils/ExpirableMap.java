@@ -27,8 +27,8 @@ public class ExpirableMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        cleanExpired();
-        return map.containsKey(key);
+        ExpirableValue<V> get = map.get(key);
+        return get != null && !get.isExpired();
     }
 
     @Override
