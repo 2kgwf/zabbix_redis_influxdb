@@ -142,8 +142,8 @@ public class Main {
             }
         } catch (IOException ex) {
             LOG.error("Failed to get item from zabbix", ex);
+            handleFailure(entry);
         }
-        handleFailure(entry);
         return false;
     }
 
