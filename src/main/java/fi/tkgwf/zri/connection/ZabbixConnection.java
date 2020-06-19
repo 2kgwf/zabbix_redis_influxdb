@@ -26,6 +26,7 @@ public class ZabbixConnection {
 
     private static final MediaType MEDIA_TYPE = MediaType.parse("application/json-rpc");
     private static final long CACHE_DURATION_MS = 10 * 60 * 1000;
+    private static final long CACHE_NULL_DURATION_MS = 30 * 60 * 1000;
 
     private final String apiUrl = Config.get("zabbix.url") + "/api_jsonrpc.php";
     private final OkHttpClient client = new OkHttpClient();
@@ -50,7 +51,7 @@ public class ZabbixConnection {
 
     public Item getItem(String itemId) throws IOException {
         Item cached = itemCache.get(itemId);
-        if (cached != null) {
+        if (itemCache.containsKey(itemId)) {
             return cached;
         }
         if (auth == null) {
@@ -67,6 +68,7 @@ public class ZabbixConnection {
         }
         List<Item> result = new Gson().fromJson(body.charStream(), ItemResponse.class).result;
         if (CollectionUtils.isEmpty(result)) {
+            itemCache.put(itemId, null, System.currentTimeMillis() + CACHE_NULL_DURATION_MS);
             return null;
         } else {
             Item item = result.get(0);

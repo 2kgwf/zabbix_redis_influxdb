@@ -2,15 +2,15 @@ package fi.tkgwf.zri.utils;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class ExpirableMap<K, V> implements Map<K, V> {
 
-    protected final Map<K, ExpirableValue<V>> map = new ConcurrentHashMap<>();
+    protected final Map<K, ExpirableValue<V>> map = new HashMap<>();
     protected long recalcCounter = 0;
 
     @Override
