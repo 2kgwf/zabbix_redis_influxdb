@@ -1,7 +1,7 @@
 version: '3.5'
 services:
   zabbix_redis_influxdb:
-    image: scrinii/zabbix_redis_influxdb
+    image: ghcr.io/scrin/zabbix_redis_influxdb
     container_name: zri_exporter
     restart: always
     environment:
